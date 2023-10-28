@@ -1,6 +1,7 @@
 package com.example.login
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -33,28 +34,53 @@ class MainActivity : AppCompatActivity() {
 
         binding.botaoEntrar.setOnClickListener{
 
-                auth.signInWithEmailAndPassword(
-                    binding.editTextUsuario.text.toString(),
+            if (binding.editTextUsuario.text.isNullOrEmpty()){
+                // Mensagem de erro Sign In.
+                Toast.makeText(
+                    baseContext, "Digite o usuário.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (binding.editTextSenha.text.isNullOrEmpty()){
+                // Mensagem de erro Sign In.
+                Toast.makeText(
+                    baseContext, "Digite a senha.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                loginUsuarioESenha(binding.editTextUsuario.text.toString(),
                     binding.editTextSenha.text.toString())
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCustomToken:success")
-                            val user = auth.currentUser
-                            Toast.makeText(baseContext, "Autenticação efetuada.",
-                                Toast.LENGTH_SHORT).show()
-                            //updateUI(user)
-                        } else {
-                            // Mensagem de erro Sign In.
-                            Log.w(TAG, "signInWithCustomToken:failure", task.exception)
-                            Toast.makeText(baseContext, "Erro de autenticação.",
-                                Toast.LENGTH_SHORT).show()
-                            //updateUI(null)
-                        }
-                    }
+            }
 
         }
 
+    }
+
+    private fun loginUsuarioESenha(usuario: String, senha: String) {
+        auth.signInWithEmailAndPassword(
+            usuario, senha
+        )
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    val user = auth.currentUser
+                    abrePrincipal()
+                    //updateUI(user)
+                } else {
+
+                    //updateUI(null)
+                }
+            }
+    }
+
+    fun abrePrincipal() {
+        Toast.makeText(baseContext, "Autenticação efetuada.",
+            Toast.LENGTH_SHORT).show()
+        binding.editTextUsuario.text.clear()
+        binding.editTextSenha.text.clear()
+        val intent = Intent(this, PrincipalActivity::class.java)
+        startActivity(intent)
+
+        finish()
     }
 
     public override fun onStart() {
