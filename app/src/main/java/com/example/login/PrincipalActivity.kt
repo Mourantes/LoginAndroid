@@ -1,13 +1,18 @@
 package com.example.login
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.login.databinding.ActivityMainBinding
 import com.example.login.databinding.ActivityPrincipalBinding
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class PrincipalActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPrincipalBinding
+    private lateinit var auth: FirebaseAuth;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -16,5 +21,16 @@ class PrincipalActivity : AppCompatActivity() {
         val view = binding.root
 
         setContentView(view)
+
+        auth = Firebase.auth
+
+        binding.botaoSair.setOnClickListener {
+            auth.signOut()
+
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+
+            finish()
+        }
     }
 }
